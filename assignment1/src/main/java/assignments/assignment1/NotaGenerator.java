@@ -1,20 +1,38 @@
 package assignments.assignment1;
 
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class NotaGenerator {
     private static final Scanner input = new Scanner(System.in);
+    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+}
 
-    /**
-     * Method main, program utama kalian berjalan disini.
-     */
     public static void main(String[] args) {
-        // TODO: Implement interface menu utama
-    }
+        int pilihOpsi = -1;
+    while (pilihOpsi != 0) {
+        printMenu();
+        System.out.print("Masukkan pilihan Anda: ");
+        pilihOpsi = input.nextInt();
 
-    /**
-     * Method untuk menampilkan menu di NotaGenerator.
-     */
+        switch (menuOption) {
+            case 0:
+                System.out.println("Terima kasih telah menggunakan NotaGenerator!");
+                break;
+            case 1:
+                generateIdMenu();
+                break;
+            case 2:
+                generateNotaMenu();
+                break;
+            default:
+                System.out.println("Pilihan tidak valid!");
+                break;
+        }
+    }
+}
+
     private static void printMenu() {
         System.out.println("Selamat datang di NotaGenerator!");
         System.out.println("==============Menu==============");
@@ -34,33 +52,63 @@ public class NotaGenerator {
         System.out.println("+-------------------------------+");
     }
 
-    /**
-     * Method untuk membuat ID dari nama dan nomor handphone.
-     * Parameter dan return type dari method ini tidak boleh diganti agar tidak mengganggu testing
-     *
-     * @return String ID anggota dengan format [NAMADEPAN]-[nomorHP]-[2digitChecksum]
-     */
+    
     public static String generateId(String nama, String nomorHP){
-        // TODO: Implement generate ID sesuai soal.
+        String namaDepan = nama.split(" ")[0];
+        String noHP = nomorHP.replaceAll("[^0-9]", ""); 
+        int checksum = getChecksum(namaDepan + noHP);
         return null;
     }
 
-    /**
-     *
-     * Method untuk membuat Nota.
-     * Parameter dan return type dari method ini tidak boleh diganti agar tidak mengganggu testing.
-     *
-     * @return string nota dengan format di bawah:
-     *         <p>ID    : [id]
-     *         <p>Paket : [paket]
-     *         <p>Harga :
-     *         <p>[berat] kg x [hargaPaketPerKg] = [totalHarga]
-     *         <p>Tanggal Terima  : [tanggalTerima]
-     *         <p>Tanggal Selesai : [tanggalTerima + LamaHariPaket]
-     */
-
+   
     public static String generateNota(String id, String paket, int berat, String tanggalTerima){
-        // TODO: Implement generate nota sesuai soal.
-        return null;
+        int hargaPaketPerKg;
+        switch (paket) {
+            case "Express":
+                hargaPaketPerKg = 12000;
+                break;
+            case "Fast":
+                hargaPaketPerKg = 10000;
+                break;
+            case "Reguler":
+                hargaPaketPerKg = 7000;
+                break;
+            default:
+                return "Invalid paket";
+        int totalHarga = berat * hargaPaketPerKg;
+
+    // Menghitung tanggal selesai
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(dateFormatter.parse(tanggalTerima));
+        } catch (ParseException e) {
+            return "Invalid tanggalTerima format";
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, getPaketLamaHari(paket));
+        String tanggalSelesai = dateFormatter.format(calendar.getTime());
+
+        // Membuat nota
+        StringBuilder notaBuilder = new StringBuilder();
+        notaBuilder.append("ID    : ").append(id).append("\n");
+        notaBuilder.append("Paket : ").append(paket).append("\n");
+        notaBuilder.append("Harga :").append("\n");
+        notaBuilder.append(berat).append(" kg x ").append(hargaPaketPerKg).append(" = ").append(totalHarga).append("\n");
+        notaBuilder.append("Tanggal Terima  : ").append(tanggalTerima).append("\n");
+        notaBuilder.append("Tanggal Selesai : ").append(tanggalSelesai);
+
+        return notaBuilder.toString();
+        }
+    }
+private static int getPaketLamaHari(String paket) {
+    switch (paket) {
+        case "Express":
+            return 1;
+        case "Fast":
+            return 2;
+        case "Reguler":
+            return 3;
+        default:
+            return -1;
+    return null;
     }
 }
